@@ -1,0 +1,610 @@
+# 所有关卡正确答案
+levels:
+  # ------------------------------ 1-1: Basic HTML Structure ------------------------------
+  - id: "1-1"
+    type: "code"
+    correct_answer:
+      html: |
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>My First Webpage</title>
+          </head>
+          <body>
+            <h1>Welcome to Web Architect!</h1>
+          </body>
+        </html>
+      explanation: "补全 HTML 根标签<html>、主体标签<body>，并闭合所有标签"
+
+  # ------------------------------ 1-2: HTML Semantic Tags ------------------------------
+  - id: "1-2"
+    type: "code"
+    correct_answer:
+      html: |
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Semantic Webpage</title>
+          </head>
+          <body>
+            <header>Web Architect Blog</header>
+            <nav>Home | Articles | About Me</nav>
+            <main>This is the core content area of the blog, including multiple articles.</main>
+            <footer>Copyright © 2025 Web Architect</footer>
+          </body>
+        </html>
+      explanation: "将 div.header 替换为 header、div.nav 替换为 nav、div.main 替换为 main、div.footer 替换为 footer，移除冗余 class 属性"
+
+  # ------------------------------ 1-3: HTML Text & Media Tags ------------------------------
+  - id: "1-3"
+    type: "code"
+    correct_answer:
+      html: |
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Text & Media Example</title>
+          </head>
+          <body>
+            <h1>My Travel Blog</h1>
+            <h2>Trip to Yunnan</h2>
+            <p>Yunnan is a beautiful place with snow-capped mountains, lakes, and ancient cities.</p>
+            <img src="https://picsum.photos/800/400" alt="Yunnan Scenery">
+            <a href="https://example.com/yunnan">View More Photos</a>
+          </body>
+        </html>
+      explanation: "添加 h1/h2 标题、p 段落、img（含 src/alt）、a（含 href）标签，属性完整"
+
+  # ------------------------------ 1-4: HTML Semantic Tags Test (Choice) ------------------------------
+  - id: "1-4"
+    type: "choice"
+    correct_answer:
+      selected_option: "B"
+      option_text: "<main> is used to wrap the core content of the page"
+      score: 10
+
+  # ------------------------------ 2-1: Basic CSS Selectors ------------------------------
+  - id: "2-1"
+    type: "code"
+    correct_answer:
+      css: |
+        /* 修正：颜色值错误 */
+        h1 {
+          color: red;
+          font-size: 24px;
+        }
+
+        /* 修正：类选择器缺失 . */
+        .intro {
+          color: blue;
+          line-height: 1.5;
+        }
+
+        /* 修正：ID 选择器缺失 # */
+        #title {
+          text-align: center;
+        }
+
+        /* 修正：选择器与 HTML class 不匹配 */
+        .box {
+          border: 2px solid red;
+          padding: 10px;
+        }
+      explanation: "修复 4 处错误：颜色值 rede→red、.intro 补 .、#title 补 #、.boxx→.box"
+
+  # ------------------------------ 2-2: CSS Box Model ------------------------------
+  - id: "2-2"
+    type: "code"
+    correct_answer:
+      css: |
+        /* 补全盒模型样式 */
+        .container {
+          width: 800px;
+          margin: 0 auto;
+        }
+
+        .box {
+          width: 200px;
+          padding: 15px; /* 内部间距 15px */
+          border: 2px solid #ccc; /* 2px 灰色边框 */
+          margin: 20px; /* 外部间距 20px */
+          background-color: #f5f5f5;
+          box-sizing: border-box; /* 防止 padding/border 影响宽度 */
+        }
+      explanation: "添加 padding/border/margin，补充 box-sizing 保证宽度稳定"
+
+  # ------------------------------ 2-3: CSS Selector Matching (Drag) ------------------------------
+  - id: "2-3"
+    type: "drag"
+    correct_answer:
+      matches:
+        - draggable_id: "drag1"
+          content: ".intro"
+          target_id: "target2"
+        - draggable_id: "drag2"
+          content: "#title"
+          target_id: "target1"
+        - draggable_id: "drag3"
+          content: ".box"
+          target_id: "target3"
+        - draggable_id: "drag4"
+          content: "h2"
+          target_id: ""
+      score: 15
+      explanation: ".intro 匹配 <p class='intro'>、#title 匹配 <h1 id='title'>、.box 匹配 <div class='box'>、h2 无匹配目标"
+
+  # ------------------------------ 2-4: CSS Text Styles ------------------------------
+  - id: "2-4"
+    type: "code"
+    correct_answer:
+      css: |
+        .article {
+          width: 800px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+
+        /* 标题样式：居中、颜色 #2c3e50 */
+        .article h2 {
+          text-align: center;
+          color: #2c3e50;
+        }
+
+        /* 段落样式：颜色 #333、行高 1.6、字号 16px */
+        .article p {
+          color: #333;
+          line-height: 1.6;
+          font-size: 16px;
+        }
+
+        /* 链接样式：颜色 #3498db、无下划线；hover 变红 */
+        .article a {
+          color: #3498db;
+          text-decoration: none;
+        }
+        .article a:hover {
+          color: red;
+        }
+      explanation: "补全标题/段落/链接样式，实现 hover 交互效果"
+
+  # ------------------------------ 3-1: Basic Flexbox Layout ------------------------------
+  - id: "3-1"
+    type: "code"
+    correct_answer:
+      css: |
+        /* Flex 导航栏布局 */
+        .nav-container {
+          background-color: #2c3e50;
+          height: 60px;
+          display: flex; /* 启用 Flex 布局 */
+          justify-content: center; /* 水平居中 */
+          align-items: center; /* 垂直居中 */
+          gap: 15px; /* 链接间距 15px */
+        }
+
+        .nav-link {
+          color: white;
+          text-decoration: none;
+          padding: 0 10px;
+        }
+
+        /* 移动端适配（<768px）：自动换行 */
+        @media (max-width: 768px) {
+          .nav-container {
+            flex-wrap: wrap; /* 允许换行 */
+            height: auto;
+            padding: 10px 0;
+          }
+        }
+      explanation: "启用 Flex 布局，添加居中/间距属性，移动端开启换行"
+
+  # ------------------------------ 3-2: Complex Grid Layout ------------------------------
+  - id: "3-2"
+    type: "code"
+    correct_answer:
+      css: |
+        /* Grid 响应式卡片布局 */
+        .card-container {
+          width: 90%;
+          max-width: 1400px;
+          margin: 0 auto;
+          display: grid; /* 启用 Grid 布局 */
+          grid-template-columns: repeat(3, 1fr); /* 3 等宽列 */
+          gap: 15px; /* 卡片间距 15px */
+          align-items: center; /* 卡片内容垂直居中 */
+        }
+
+        .card {
+          background-color: #f8f9fa;
+          border: 1px solid #eee;
+          padding: 20px;
+          height: 150px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center; /* 内部内容垂直居中 */
+        }
+
+        /* 平板（768-1200px）：2 列 */
+        @media (max-width: 1200px) {
+          .card-container {
+            grid-template-columns: repeat(2, 1fr); /* 2 等宽列 */
+          }
+        }
+
+        /* 移动端（<768px）：1 列 */
+        @media (max-width: 768px) {
+          .card-container {
+            grid-template-columns: 1fr; /* 1 列 */
+          }
+        }
+      explanation: "启用 Grid 布局，按屏幕尺寸调整列数，卡片内部 Flex 居中"
+
+  # ------------------------------ 3-3: Float & Clear Float ------------------------------
+  - id: "3-3"
+    type: "code"
+    correct_answer:
+      css: |
+        /* 浮动布局 + 清除浮动 */
+        .article-container {
+          width: 800px;
+          margin: 0 auto;
+          border: 1px solid #ccc;
+          overflow: hidden; /* 修复父容器高度塌陷 */
+        }
+
+        .article-img {
+          float: left; /* 图片左浮动 */
+          width: 300px; /* 固定宽度 */
+          margin-right: 10px; /* 与文本间距 10px */
+          margin-bottom: 10px; /* 底部间距 */
+        }
+
+        h3 {
+          margin-top: 0;
+        }
+      explanation: "图片左浮动+固定宽度+间距，父容器 overflow: hidden 清除浮动"
+
+  # ------------------------------ 4-1: Advanced Responsive Design ------------------------------
+  - id: "4-1"
+    type: "code"
+    correct_answer:
+      css: |
+        /* 高级响应式布局 */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        .navbar {
+          background-color: #2c3e50;
+          color: white;
+          padding: 15px 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .nav-links a {
+          color: white;
+          text-decoration: none;
+          margin-left: 20px;
+        }
+
+        .container {
+          width: 90%;
+          max-width: 1400px;
+          margin: 20px auto;
+          display: flex;
+          gap: 20px;
+        }
+
+        .sidebar-left {
+          width: 20%;
+          background-color: #f5f5f5;
+          padding: 15px;
+        }
+
+        .main-content {
+          width: 60%;
+          padding: 15px;
+        }
+
+        .sidebar-right {
+          width: 20%;
+          background-color: #f5f5f5;
+          padding: 15px;
+        }
+
+        /* 平板（768-1200px）：2 列（主内容 + 右侧边栏） */
+        @media (max-width: 1200px) {
+          .container {
+            flex-direction: row;
+          }
+          .sidebar-left {
+            display: none; /* 隐藏左侧边栏 */
+          }
+          .main-content {
+            width: 70%;
+          }
+          .sidebar-right {
+            width: 30%;
+          }
+        }
+
+        /* 移动端（<768px）：1 列，隐藏冗余导航 */
+        @media (max-width: 768px) {
+          .container {
+            flex-direction: column; /* 垂直堆叠 */
+          }
+          .main-content, .sidebar-right {
+            width: 100%;
+          }
+          .nav-links a:nth-child(4), .nav-links a:nth-child(5) {
+            display: none; /* 隐藏第4/5个导航链接 */
+          }
+        }
+      explanation: "PC 3列、平板 2列（隐藏左栏）、移动端 1列，导航栏隐藏冗余链接"
+
+  # ------------------------------ 4-2: CSS Beautification & Animations ------------------------------
+  - id: "4-2"
+    type: "code"
+    correct_answer:
+      css: |
+        /* CSS 美化 + 动画 */
+        .card-container {
+          display: flex;
+          gap: 20px;
+          justify-content: center;
+          padding: 50px;
+        }
+
+        .card {
+          width: 300px;
+          padding: 25px;
+          background: linear-gradient(to right, #3498db, #2980b9); /* 渐变背景 */
+          border-radius: 8px; /* 圆角 */
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 阴影 */
+          transition: all 0.3s ease; /* 平滑过渡 */
+          color: white;
+        }
+
+        /* 卡片 hover：上浮 5px + 加深阴影 */
+        .card:hover {
+          transform: translateY(-5px); /* 上浮 5px */
+          box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* 加深阴影 */
+        }
+
+        .card-btn {
+          background-color: white;
+          color: #3498db;
+          border: none;
+          padding: 10px 20px;
+          border-radius: 20px;
+          margin-top: 15px;
+          cursor: pointer;
+          transition: all 0.3s ease; /* 过渡动画 */
+        }
+
+        /* 按钮 hover：背景变色 + 缩放 */
+        .card-btn:hover {
+          background-color: #f1c40f; /* 背景色 */
+          transform: scale(1.05); /* 缩放 1.05 倍 */
+          color: white;
+        }
+      explanation: "添加渐变/圆角/阴影，hover 上浮+缩放动画，过渡效果保证流畅"
+
+  # ------------------------------ 4-3: Comprehensive Project ------------------------------
+  - id: "4-3"
+    type: "code"
+    correct_answer:
+      html: |
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>My Personal Blog</title>
+            <link rel="stylesheet" href="styles.css">
+          </head>
+          <body>
+            <!-- 导航栏 -->
+            <nav class="navbar">
+              <div class="logo">My Blog</div>
+              <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#articles">Articles</a>
+                <a href="#categories">Categories</a>
+                <a href="#about">About</a>
+              </div>
+            </nav>
+
+            <!-- 轮播图（简化） -->
+            <section class="carousel">
+              <img src="https://picsum.photos/1200/400" alt="Blog Banner">
+            </section>
+
+            <!-- 主内容区 -->
+            <div class="container">
+              <!-- 文章列表 -->
+              <main class="article-list">
+                <article class="post">
+                  <h2>Mastering Flexbox Layout</h2>
+                  <p>Flexbox is a powerful layout tool for building responsive web pages...</p>
+                  <a href="#" class="read-more">Read More</a>
+                </article>
+                <article class="post">
+                  <h2>CSS Grid for Complex Layouts</h2>
+                  <p>Grid layout allows you to create 2D layouts with ease...</p>
+                  <a href="#" class="read-more">Read More</a>
+                </article>
+              </main>
+
+              <!-- 侧边栏：分类 + 推荐文章 -->
+              <aside class="sidebar">
+                <div class="category-widget">
+                  <h4>Categories</h4>
+                  <ul>
+                    <li><a href="#">HTML/CSS</a></li>
+                    <li><a href="#">JavaScript</a></li>
+                    <li><a href="#">Responsive Design</a></li>
+                  </ul>
+                </div>
+                <div class="recommend-widget">
+                  <h4>Popular Posts</h4>
+                  <ul>
+                    <li><a href="#">CSS Animations 101</a></li>
+                    <li><a href="#">Mobile-First Design</a></li>
+                  </ul>
+                </div>
+              </aside>
+            </div>
+
+            <!-- 页脚 -->
+            <footer class="footer">
+              <p>Copyright © 2025 My Personal Blog | All Rights Reserved</p>
+            </footer>
+          </body>
+        </html>
+      css: |
+        /* 1. 重置样式 */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Arial', sans-serif;
+        }
+
+        /* 2. 全局样式 */
+        body {
+          color: #333;
+          line-height: 1.6;
+          background-color: #f9f9f9;
+        }
+
+        a {
+          text-decoration: none;
+          color: #3498db;
+          transition: color 0.3s ease;
+        }
+
+        a:hover {
+          color: #2980b9;
+        }
+
+        /* 3. 导航栏 */
+        .navbar {
+          background: linear-gradient(to right, #2c3e50, #34495e);
+          color: white;
+          padding: 1rem 2rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .nav-links a {
+          color: white;
+          margin-left: 1.5rem;
+        }
+
+        .nav-links a:hover {
+          color: #f1c40f;
+        }
+
+        /* 4. 轮播图 */
+        .carousel img {
+          width: 100%;
+          height: auto;
+        }
+
+        /* 5. 主容器布局 */
+        .container {
+          width: 90%;
+          max-width: 1200px;
+          margin: 2rem auto;
+          display: grid;
+          grid-template-columns: 70% 30%;
+          gap: 2rem;
+        }
+
+        /* 6. 文章列表 */
+        .post {
+          background: white;
+          padding: 1.5rem;
+          margin-bottom: 2rem;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          transition: transform 0.3s ease;
+        }
+
+        .post:hover {
+          transform: translateY(-5px);
+        }
+
+        .post h2 {
+          color: #2c3e50;
+          margin-bottom: 0.5rem;
+        }
+
+        .read-more {
+          display: inline-block;
+          margin-top: 1rem;
+          padding: 0.5rem 1rem;
+          background: #3498db;
+          color: white;
+          border-radius: 4px;
+        }
+
+        .read-more:hover {
+          background: #2980b9;
+          color: white;
+        }
+
+        /* 7. 侧边栏 */
+        .sidebar {
+          background: white;
+          padding: 1.5rem;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h4 {
+          color: #2c3e50;
+          margin-bottom: 1rem;
+          padding-bottom: 0.5rem;
+          border-bottom: 2px solid #eee;
+        }
+
+        .sidebar ul {
+          list-style: none;
+        }
+
+        .sidebar li {
+          margin-bottom: 0.5rem;
+        }
+
+        /* 8. 页脚 */
+        .footer {
+          background: #2c3e50;
+          color: white;
+          text-align: center;
+          padding: 1.5rem;
+          margin-top: 2rem;
+        }
+
+        /* 9. 响应式适配 */
+        @media (max-width: 768px) {
+          .container {
+            grid-template-columns: 1fr; /* 移动端 1 列 */
+          }
+
+          .nav-links {
+            display: none; /* 隐藏导航（简化版） */
+          }
+
+          .navbar {
+            justify-content: center;
+          }
+        }
+      explanation: "综合使用语义化 HTML、Flex+Grid 布局、响应式适配、CSS 美化/动画，满足所有要求"

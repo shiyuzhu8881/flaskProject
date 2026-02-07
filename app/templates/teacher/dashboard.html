@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Data Dashboard - Web Architect{% endblock %}
+
+{% block extra_css %}
+<!-- Chart.js Data Visualization -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.css">
+<style>
+    .stat-card {
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border-radius: 8px;
+    }
+    .stat-card .card-body {
+        padding: 20px;
+    }
+    .stat-card .card-title {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+    .stat-card .stat-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #0d6efd;
+    }
+    .chart-container {
+        height: 300px;
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">
+    <i class="fa fa-tachometer"></i> Class Data Dashboard
+</h2>
+
+<!-- Statistics Cards Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h5 class="card-title">Total Students</h5>
+                <div class="stat-value">{{ analytics.total_students }}</div>
+                <p class="text-muted mt-1">Total number of students participating in game-based learning</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h5 class="card-title">Average Passed Levels</h5>
+                <div class="stat-value">{{ analytics.avg_passed_levels }}</div>
+                <p class="text-muted mt-1">Average number of levels completed per student</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h5 class="card-title">Average Score</h5>
+                <div class="stat-value">{{ analytics.avg_avg_score }}</div>
+                <p class="text-muted mt-1">Average score across all levels per student</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h5 class="card-title">Final Project Pass Rate</h5>
+                <div class="stat-value">
+                    {% set final_level = analytics.level_pass_rate.get('4-3', 0) %}
+                    {{ final_level }}%
+                </div>
+                <p class="text-muted mt-1">Percentage of students who completed the final project</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Area -->
+<div class="row g-4">
+    <!-- Level Pass Rate Chart -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Level Pass Rate</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="levelPassRateChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Top 5 Common Errors Chart -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Top 5 Common Error Types</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="commonErrorsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Student Progress Distribution Chart -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Student Progress Distribution</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="progressDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Game Group vs Traditional Group Comparison Chart (Thesis Validation) -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning text-white">
+                <h5 class="mb-0">Game Group vs Traditional Group Comparison (Thesis Validation)</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center" id="comparison-chart-container">
+                    <img src="" alt="Comparison Chart" class="img-fluid rounded" id="comparison-chart">
+                    <button class="btn btn-outline-warning mt-3" id="generate-comparison-btn">
+                        <i class="fa fa-refresh"></i> Generate Comparison Chart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+<script>
+    // Initialize Level Pass Rate Chart
+    const levelPassRateCtx = document.getElementById('levelPassRateChart').getContext('2d');
+    new Chart(levelPassRateCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ analytics.level_pass_rate.keys() | list | tojson }},
+            datasets: [{
+                label: 'Pass Rate (%)',
+                data: {{ analytics.level_pass_rate.values() | list | tojson }},
+                backgroundColor: 'rgba(13, 110, 253, 0.7)',
+                borderColor: 'rgba(13, 110, 253, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Pass Rate (%)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Level'
+                    }
+                }
+            }
+        }
+    });
+
+    // Initialize Common Errors Chart
+    const commonErrorsCtx = document.getElementById('commonErrorsChart').getContext('2d');
+    new Chart(commonErrorsCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ analytics.common_errors.keys() | list | tojson }},
+            datasets: [{
+                data: {{ analytics.common_errors.values() | list | tojson }},
+                backgroundColor: [
+                    'rgba(220, 38, 38, 0.7)',
+                    'rgba(234, 179, 8, 0.7)',
+                    'rgba(22, 163, 74, 0.7)',
+                    'rgba(13, 110, 253, 0.7)',
+                    'rgba(107, 114, 128, 0.7)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+
+    // Initialize Progress Distribution Chart
+    const progressDistributionCtx = document.getElementById('progressDistributionChart').getContext('2d');
+    new Chart(progressDistributionCtx, {
+        type: 'line',
+        data: {
+            labels: {{ analytics.progress_distribution.keys() | list | tojson }},
+            datasets: [{
+                label: 'Number of Students',
+                data: {{ analytics.progress_distribution.values() | list | tojson }},
+                fill: true,
+                backgroundColor: 'rgba(22, 163, 74, 0.2)',
+                borderColor: 'rgba(22, 163, 74, 1)',
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Students'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Number of Passed Levels'
+                    }
+                }
+            }
+        }
+    });
+
+    // Generate Comparison Chart
+    document.getElementById('generate-comparison-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('generate-comparison-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Generating...';
+
+        try {
+            const response = await fetch('{{ url_for('teacher.comparison_chart') }}');
+            const data = await response.json();
+            if (data.status === 'success') {
+                document.getElementById('comparison-chart').src = `data:image/png;base64,${data.chart_base64}`;
+            }
+        } catch (error) {
+            alert('Failed to generate chart, please try again');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-refresh"></i> Generate Comparison Chart';
+        }
+    });
+</script>
+{% endblock %}

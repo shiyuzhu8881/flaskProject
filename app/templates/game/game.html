@@ -1,0 +1,529 @@
+{% extends "base.html" %}
+
+{% block title %}Web Architect - {{ current_level.id }} {{ current_level.topic }}{% endblock %}
+
+{% block extra_css %}
+<!-- CodeMirror Styles -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+<!-- Game-Specific CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
+<!-- 新增：拖拽功能样式 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.css">
+<style>
+  /* 选择题样式 */
+  .choice-option {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .choice-option:hover {
+    background-color: #f8f9fa;
+  }
+  /* 拖拽样式 */
+  .drag-target {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  .draggable-item {
+    margin-bottom: 10px;
+    padding: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    text-align: center;
+    cursor: grab;
+  }
+  .draggable-item:active {
+    cursor: grabbing;
+  }
+  .drop-area {
+    min-height: 40px;
+    margin-top: 10px;
+    border: 2px dashed #adb5bd;
+    border-radius: 4px;
+    padding: 10px;
+  }
+  .drop-area.filled {
+    border-color: #198754;
+    background-color: #f0fdf4;
+  }
+  /* 积分展示样式 */
+  .score-card {
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .score-card h5 {
+    color: #856404;
+    margin-bottom: 5px;
+  }
+  .score-card .score-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #dc3545;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="game-container row g-4">
+    <!-- Left Side: Task & Story Area (2 Columns) -->
+    <div class="col-lg-3 col-md-12">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fa fa-book"></i> Task Instructions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="scene mb-4">
+                    <img src="{{ url_for('static', filename='assets/images/stage' + current_level.stage|string + '.png') }}"
+                         alt="Stage Scene" class="img-fluid rounded">
+                </div>
+                <div class="task-description">
+                    <h6 class="fw-bold">Level: {{ current_level.id }} - {{ current_level.topic }}</h6>
+                    <p class="text-muted">{{ current_level.task }}</p>
+                    <div class="mt-3">
+                        <h6 class="fw-bold">Required Knowledge:</h6>
+                        <ul class="list-unstyled">
+                            {% for knowledge in current_level.get_required_knowledge() %}
+                                <li><i class="fa fa-check-circle text-success"></i> {{ knowledge }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <!-- 新增：关卡积分展示 -->
+                    <div class="mt-4 score-card">
+                        <h5>Level Score</h5>
+                        <div class="score-value">
+                            {% if current_level.type == 'code' %}
+                                20 Points
+                            {% else %}
+                                {{ current_level.get_extra_config().score | default(0) }} Points
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button id="hint-btn" class="btn btn-outline-primary w-100">
+                    <i class="fa fa-lightbulb-o"></i> Get Hint
+                </button>
+            </div>
+        </div>
+
+        <!-- Level Progress Sidebar -->
+        <div class="card mt-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">
+                    <i class="fa fa-tasks"></i> Level Progress
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="progress mb-3" style="height: 8px;">
+                    {% set passed_count = progress.values() | select('equalto', 'passed') | list | length %}
+                    {% set total_count = all_levels | length %}
+                    {% set progress_percent = (passed_count / total_count) * 100 %}
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress_percent }}%" aria-valuenow="{{ progress_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <p class="text-sm text-muted">Passed Levels: {{ passed_count }}/{{ total_count }}</p>
+                <!-- 新增：总积分展示 -->
+                <div class="mt-3 p-3 bg-primary/10 rounded">
+                    <p class="text-sm text-muted mb-1">Total Score</p>
+                    <p class="fw-bold text-primary" id="total-score">{{ current_user.score }}</p>
+                </div>
+                <div class="level-list mt-3">
+                    {% for level in all_levels %}
+                        <div class="d-flex align-items-center mb-2">
+                            {% if progress.get(level.id) == 'passed' %}
+                                <i class="fa fa-check-circle text-success me-2"></i>
+                                <span class="text-success">{{ level.id }} - {{ level.topic }}</span>
+                            {% elif progress.get(level.id) == 'unlocked' %}
+                                <i class="fa fa-lock-open text-primary me-2"></i>
+                                <span class="text-primary">{{ level.id }} - {{ level.topic }}</span>
+                            {% else %}
+                                <i class="fa fa-lock text-muted me-2"></i>
+                                <span class="text-muted">{{ level.id }} - {{ level.topic }}</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Middle: Interactive Area (4 Columns) -->
+    <div class="col-lg-5 col-md-12">
+        <div class="card h-100">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">
+                    <i class="fa fa-code"></i> {% if current_level.type == 'code' %}Code Editor{% elif current_level.type == 'choice' %}Multiple Choice{% else %}Drag & Match{% endif %}
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <!-- 原有：编程关编辑器 -->
+                {% if current_level.type == 'code' %}
+                    <!-- HTML Editor -->
+                    <div class="editor-container p-3 border-bottom">
+                        <h6 class="fw-bold mb-2">HTML Editor</h6>
+                        <textarea id="html-editor" class="editor">{{ current_level.initial_html }}</textarea>
+                    </div>
+                    <!-- CSS Editor -->
+                    <div class="editor-container p-3">
+                        <h6 class="fw-bold mb-2">CSS Editor</h6>
+                        <textarea id="css-editor" class="editor">{{ current_level.initial_css }}</textarea>
+                    </div>
+                {% elif current_level.type == 'choice' %}
+                    <!-- 优化：选择题区域（显示题目+容错+兜底提示） -->
+                    <div class="p-4">
+                        <!-- 显式渲染题目文本 -->
+                        <h6 class="fw-bold mb-4">{{ current_level.task }}</h6>
+
+                        <form id="choice-form">
+                            {% set config = current_level.get_extra_config() | default({}, true) %}
+                            <!-- 容错：检查options是否存在且为字典 -->
+                            {% if config.options and config.options is mapping and config.options|length > 0 %}
+                                {% for option_key, option_val in config.options.items() %}
+                                    <div class="form-check choice-option mb-3">
+                                        <input class="form-check-input"
+                                               type="{{ 'radio' if config.question_type == 'single' else 'checkbox' }}"
+                                               name="answer"
+                                               id="option-{{ option_key }}"
+                                               value="{{ option_key }}">
+                                        <label class="form-check-label" for="option-{{ option_key }}">
+                                            {{ option_key }}. {{ option_val }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <!-- 兜底提示：无选项时显示 -->
+                                <div class="alert alert-warning text-center py-3">
+                                    <i class="fa fa-exclamation-triangle"></i> No options configured for this question!
+                                </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                {% elif current_level.type == 'drag' %}
+                    <!-- 新增：拖拽区域 -->
+                    <div class="p-4">
+                        {% set config = current_level.get_extra_config() | default({}, true) %}
+                        <div class="row g-4">
+                            <!-- 左侧目标区 -->
+                            <div class="col-6">
+                                <h6 class="fw-bold mb-3">Target Elements</h6>
+                                {% if config.targets and config.targets|length > 0 %}
+                                    {% for target in config.targets %}
+                                        <div class="drag-target">
+                                            <h7>{{ target.name }}</h7>
+                                            <div class="drop-area" data-target="{{ target.id }}"></div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="alert alert-warning text-center py-3">
+                                        <i class="fa fa-exclamation-triangle"></i> No target elements configured!
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <!-- 右侧拖拽项 -->
+                            <div class="col-6">
+                                <h6 class="fw-bold mb-3">Draggable Selectors</h6>
+                                <div id="draggable-list">
+                                    {% if config.draggables and config.draggables|length > 0 %}
+                                        {% for draggable in config.draggables %}
+                                            <div class="draggable-item" data-id="{{ draggable.id }}" data-correct="{{ draggable.correct_target }}">
+                                                {{ draggable.content }}
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="alert alert-warning text-center py-3">
+                                            <i class="fa fa-exclamation-triangle"></i> No draggable items configured!
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <!-- 提交按钮（根据关卡类型切换） -->
+                {% if current_level.type == 'code' %}
+                    <button id="submit-btn" class="btn btn-success w-100 py-2">
+                        <i class="fa fa-check"></i> Submit Code (Check Work)
+                    </button>
+                {% elif current_level.type == 'choice' %}
+                    <button id="submit-choice" class="btn btn-success w-100 py-2">
+                        <i class="fa fa-check"></i> Submit Answer
+                    </button>
+                {% elif current_level.type == 'drag' %}
+                    <button id="submit-drag" class="btn btn-success w-100 py-2">
+                        <i class="fa fa-check"></i> Check Matching
+                    </button>
+                {% endif %}
+                <!-- Submission Feedback Area -->
+                <div id="feedback" class="mt-3 alert d-none" role="alert"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Side: Live Preview Area (5 Columns) -->
+    <div class="col-lg-4 col-md-12">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0 d-flex justify-content-between align-items-center">
+                    <span><i class="fa fa-desktop"></i> {% if current_level.type == 'code' %}Live Preview{% else %}Result{% endif %}</span>
+                    {% if current_level.type == 'code' %}
+                        <div class="device-buttons">
+                            <button class="btn btn-sm btn-light device-btn active" data-device="pc">PC</button>
+                            <button class="btn btn-sm btn-light device-btn" data-device="pad">Tablet</button>
+                            <button class="btn btn-sm btn-light device-btn" data-device="phone">Phone</button>
+                        </div>
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                {% if current_level.type == 'code' %}
+                    <div class="preview-container">
+                        <iframe id="preview-iframe" class="w-100"></iframe>
+                    </div>
+                {% else %}
+                    <!-- 选择题/拖拽题结果展示区 -->
+                    <div class="p-4 text-center" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
+                        <div id="result-area">
+                            <i class="fa fa-question-circle fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Submit your answer to see the result</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-footer text-center text-muted">
+                {% if current_level.type == 'code' %}
+                    <p class="mb-0">Tip: Preview updates in real-time as you edit code. Click device buttons to switch preview modes.</p>
+                {% elif current_level.type == 'choice' %}
+                    <p class="mb-0">Tip: Select the correct answer and click submit to earn points</p>
+                {% else %}
+                    <p class="mb-0">Tip: Drag the selectors to the correct target elements</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- CodeMirror Core Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+<!-- 新增：拖拽库 -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<!-- Game Core Interaction JS -->
+<script src="{{ url_for('static', filename='js/game.js') }}"></script>
+<script>
+    // Global Configuration
+    const GAME_CONFIG = {
+        currentLevel: '{{ current_level.id }}',
+        userId: '{{ current_user.id }}',
+        levelType: '{{ current_level.type }}',
+        extraConfig: {{ current_level.get_extra_config()|tojson | default('{}') }}
+    };
+
+    // 初始化提示功能（保留原有逻辑）
+    document.getElementById('hint-btn').addEventListener('click', function() {
+        const hints = {{ current_level.get_hints()|tojson | default('[]') }};
+        const usedHintCount = parseInt(localStorage.getItem(`hint_${GAME_CONFIG.currentLevel}`) || '0');
+
+        if (usedHintCount < hints.length) {
+            showFeedback(`Hint: ${hints[usedHintCount]}`, 'info');
+            localStorage.setItem(`hint_${GAME_CONFIG.currentLevel}`, usedHintCount + 1);
+        } else {
+            showFeedback('No more hints available!', 'warning');
+        }
+    });
+
+    // 反馈提示函数（复用原有逻辑）
+    function showFeedback(message, type) {
+        const feedbackEl = document.getElementById('feedback');
+        feedbackEl.textContent = message;
+        feedbackEl.className = `mt-3 alert alert-${type}`;
+        feedbackEl.classList.remove('d-none');
+
+        setTimeout(() => {
+            feedbackEl.classList.add('d-none');
+        }, 5000);
+    }
+
+    // 加分API调用函数
+    async function addScore(score) {
+        try {
+            const response = await fetch('{{ url_for('api.add_score') }}', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({score: score})
+            });
+            const data = await response.json();
+            if (data.success) {
+                // 更新页面积分显示
+                document.getElementById('total-score').textContent = data.new_score;
+                return true;
+            } else {
+                showFeedback(data.msg, 'danger');
+                return false;
+            }
+        } catch (error) {
+            showFeedback('Failed to update score', 'danger');
+            return false;
+        }
+    }
+
+    // 跳转到下一关（复用原有逻辑）
+    function goToNextLevel() {
+        const allLevels = {{ all_levels|map(attribute='id')|list|tojson | default('[]') }};
+        const currentIndex = allLevels.indexOf(GAME_CONFIG.currentLevel);
+        if (currentIndex < allLevels.length - 1) {
+            window.location.href = `{{ url_for('main.game') }}?level_id=${allLevels[currentIndex + 1]}`;
+        } else {
+            window.location.href = '{{ url_for('main.student_stats') }}';
+        }
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', () => {
+        // 原有：编程关初始化
+        if (GAME_CONFIG.levelType === 'code') {
+            initGame();
+        }
+        // 优化：选择题初始化（增加空值容错）
+        else if (GAME_CONFIG.levelType === 'choice') {
+            document.getElementById('submit-choice').addEventListener('click', async () => {
+                // 新增：容错检查
+                if (!GAME_CONFIG.extraConfig || !GAME_CONFIG.extraConfig.correct_answer) {
+                    showFeedback('Question configuration error! Please contact the administrator.', 'danger');
+                    return;
+                }
+                if (!GAME_CONFIG.extraConfig.options || Object.keys(GAME_CONFIG.extraConfig.options).length === 0) {
+                    showFeedback('No options available for this question!', 'warning');
+                    return;
+                }
+
+                const formData = new FormData(document.getElementById('choice-form'));
+                const answers = Array.from(formData.getAll('answer')).sort();
+                const correctAnswer = GAME_CONFIG.extraConfig.correct_answer
+                    .toString().split(',').map(a => a.trim()).sort();
+
+                if (answers.length === 0) {
+                    showFeedback('Please select an answer!', 'warning');
+                    return;
+                }
+
+                if (JSON.stringify(answers) === JSON.stringify(correctAnswer)) {
+                    // 答案正确，加分
+                    const scoreAdded = await addScore(GAME_CONFIG.extraConfig.score || 0);
+                    if (scoreAdded) {
+                        showFeedback(`Correct! You earned ${GAME_CONFIG.extraConfig.score || 0} points!`, 'success');
+                        // 更新进度为通关（复用原有进度逻辑）
+                        const progress = {{ current_user.get_progress()|tojson | default('{}') }};
+                        progress[GAME_CONFIG.currentLevel] = 'passed';
+                        fetch('{{ url_for('api.update_progress') }}', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({progress: progress})
+                        });
+                        // 跳转到下一关
+                        setTimeout(goToNextLevel, 2000);
+                    }
+                } else {
+                    showFeedback('Wrong answer! Please try again.', 'danger');
+                }
+            });
+        }
+        // 优化：拖拽题初始化（增加空值容错）
+        else if (GAME_CONFIG.levelType === 'drag') {
+            // 容错：检查配置是否存在
+            if (!GAME_CONFIG.extraConfig || !GAME_CONFIG.extraConfig.targets || !GAME_CONFIG.extraConfig.draggables) {
+                showFeedback('Drag & drop configuration error!', 'danger');
+                return;
+            }
+
+            // 初始化拖拽列表
+            const draggableList = document.getElementById('draggable-list');
+            new Sortable(draggableList, {
+                group: 'shared',
+                animation: 150,
+                ghostClass: 'bg-light'
+            });
+
+            // 初始化目标区域
+            document.querySelectorAll('.drop-area').forEach(area => {
+                new Sortable(area, {
+                    group: 'shared',
+                    animation: 150,
+                    ghostClass: 'bg-primary/10',
+                    onAdd: function() {
+                        this.el.classList.add('filled');
+                        // 限制每个目标区只能有一个拖拽项
+                        if (this.el.children.length > 1) {
+                            this.el.removeChild(this.el.firstChild);
+                        }
+                    },
+                    onRemove: function() {
+                        if (this.el.children.length === 0) {
+                            this.el.classList.remove('filled');
+                        }
+                    }
+                });
+            });
+
+            // 提交验证
+            document.getElementById('submit-drag').addEventListener('click', async () => {
+                let isAllCorrect = true;
+
+                document.querySelectorAll('.drop-area').forEach(area => {
+                    const targetId = area.dataset.target;
+                    const draggable = area.querySelector('.draggable-item');
+
+                    if (draggable) {
+                        const correctTarget = draggable.dataset.correct;
+                        if (correctTarget !== targetId) {
+                            isAllCorrect = false;
+                            area.classList.add('border-danger');
+                            setTimeout(() => area.classList.remove('border-danger'), 1000);
+                        }
+                    } else if (targetId) {
+                        // 目标区未匹配拖拽项
+                        isAllCorrect = false;
+                        area.classList.add('border-danger');
+                        setTimeout(() => area.classList.remove('border-danger'), 1000);
+                    }
+                });
+
+                if (isAllCorrect) {
+                    // 匹配正确，加分
+                    const scoreAdded = await addScore(GAME_CONFIG.extraConfig.score || 0);
+                    if (scoreAdded) {
+                        showFeedback(`Correct! You earned ${GAME_CONFIG.extraConfig.score || 0} points!`, 'success');
+                        // 更新进度为通关
+                        const progress = {{ current_user.get_progress()|tojson | default('{}') }};
+                        progress[GAME_CONFIG.currentLevel] = 'passed';
+                        fetch('{{ url_for('api.update_progress') }}', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({progress: progress})
+                        });
+                        // 跳转到下一关
+                        setTimeout(goToNextLevel, 2000);
+                    }
+                } else {
+                    showFeedback('Matching incorrect! Please try again.', 'danger');
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

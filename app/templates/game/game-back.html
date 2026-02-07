@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Web Architect - {{ current_level.id }} {{ current_level.topic }}{% endblock %}
+
+{% block extra_css %}
+<!-- CodeMirror Styles -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+<!-- Game-Specific CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="game-container row g-4">
+    <!-- Left Side: Task & Story Area (2 Columns) -->
+    <div class="col-lg-3 col-md-12">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fa fa-book"></i> Task Instructions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="scene mb-4">
+                    <img src="{{ url_for('static', filename='assets/images/stage' + current_level.stage|string + '.png') }}"
+                         alt="Stage Scene" class="img-fluid rounded">
+                </div>
+                <div class="task-description">
+                    <h6 class="fw-bold">Level: {{ current_level.id }} - {{ current_level.topic }}</h6>
+                    <p class="text-muted">{{ current_level.task }}</p>
+                    <div class="mt-3">
+                        <h6 class="fw-bold">Required Knowledge:</h6>
+                        <ul class="list-unstyled">
+                            {% for knowledge in current_level.get_required_knowledge() %}
+                                <li><i class="fa fa-check-circle text-success"></i> {{ knowledge }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button id="hint-btn" class="btn btn-outline-primary w-100">
+                    <i class="fa fa-lightbulb-o"></i> Get Hint
+                </button>
+            </div>
+        </div>
+
+        <!-- Level Progress Sidebar -->
+        <div class="card mt-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">
+                    <i class="fa fa-tasks"></i> Level Progress
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="progress mb-3" style="height: 8px;">
+                    {% set passed_count = progress.values() | select('equalto', 'passed') | list | length %}
+                    {% set total_count = all_levels | length %}
+                    {% set progress_percent = (passed_count / total_count) * 100 %}
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress_percent }}%" aria-valuenow="{{ progress_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <p class="text-sm text-muted">Passed Levels: {{ passed_count }}/{{ total_count }}</p>
+                <div class="level-list mt-3">
+                    {% for level in all_levels %}
+                        <div class="d-flex align-items-center mb-2">
+                            {% if progress.get(level.id) == 'passed' %}
+                                <i class="fa fa-check-circle text-success me-2"></i>
+                                <span class="text-success">{{ level.id }} - {{ level.topic }}</span>
+                            {% elif progress.get(level.id) == 'unlocked' %}
+                                <i class="fa fa-lock-open text-primary me-2"></i>
+                                <span class="text-primary">{{ level.id }} - {{ level.topic }}</span>
+                            {% else %}
+                                <i class="fa fa-lock text-muted me-2"></i>
+                                <span class="text-muted">{{ level.id }} - {{ level.topic }}</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Middle: Code Editor Area (4 Columns) -->
+    <div class="col-lg-5 col-md-12">
+        <div class="card h-100">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">
+                    <i class="fa fa-code"></i> Code Editor
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <!-- HTML Editor -->
+                <div class="editor-container p-3 border-bottom">
+                    <h6 class="fw-bold mb-2">HTML Editor</h6>
+                    <textarea id="html-editor" class="editor">{{ current_level.initial_html }}</textarea>
+                </div>
+                <!-- CSS Editor -->
+                <div class="editor-container p-3">
+                    <h6 class="fw-bold mb-2">CSS Editor</h6>
+                    <textarea id="css-editor" class="editor">{{ current_level.initial_css }}</textarea>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button id="submit-btn" class="btn btn-success w-100 py-2">
+                    <i class="fa fa-check"></i> Submit Code (Check Work)
+                </button>
+                <!-- Submission Feedback Area -->
+                <div id="feedback" class="mt-3 alert d-none" role="alert"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Side: Live Preview Area (5 Columns) -->
+    <div class="col-lg-4 col-md-12">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0 d-flex justify-content-between align-items-center">
+                    <span><i class="fa fa-desktop"></i> Live Preview</span>
+                    <div class="device-buttons">
+                        <button class="btn btn-sm btn-light device-btn active" data-device="pc">PC</button>
+                        <button class="btn btn-sm btn-light device-btn" data-device="pad">Tablet</button>
+                        <button class="btn btn-sm btn-light device-btn" data-device="phone">Phone</button>
+                    </div>
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="preview-container">
+                    <iframe id="preview-iframe" class="w-100"></iframe>
+                </div>
+            </div>
+            <div class="card-footer text-center text-muted">
+                <p class="mb-0">Tip: Preview updates in real-time as you edit code. Click device buttons to switch preview modes.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- CodeMirror Core Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+<!-- Game Core Interaction JS -->
+<script src="{{ url_for('static', filename='js/game.js') }}"></script>
+<script>
+    // Global Level Configuration
+    const GAME_CONFIG = {
+        currentLevel: '{{ current_level.id }}',
+        userId: '{{ current_user.id }}'
+    };
+    // Initialize Game
+    document.addEventListener('DOMContentLoaded', () => {
+        initGame();
+    });
+</script>
+{% endblock %}

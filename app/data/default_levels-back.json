@@ -1,0 +1,201 @@
+[
+  {
+    "id": "1-1",
+    "stage": 1,
+    "topic": "Basic HTML Structure",
+    "task": "Complete the core tags of the HTML document (<html>, <head>, <body>) and ensure all tags are properly closed",
+    "difficulty": 1,
+    "hints": [
+      "<!DOCTYPE html> is the HTML5 document declaration and must be placed at the top",
+      "<html> is the root tag of the page, and all content must be wrapped in it",
+      "<head> contains page configurations (e.g., <title>), and <body> contains visible content",
+      "Tags must appear in pairs (e.g., <div> corresponds to </div>)"
+    ],
+    "initial_html": "<!DOCTYPE html>\n<!-- Missing <html> root tag -->\n  <head>\n    <title>My First Webpage</title>\n  </head>\n  <!-- Missing <body> tag -->\n    <h1>Welcome to Web Architect!</h1>\n<!-- Missing closing tags -->",
+    "initial_css": "",
+    "required_knowledge": ["HTML document structure", "Tag closing rules", "Relationship between root and child tags"]
+  },
+  {
+    "id": "1-2",
+    "stage": 1,
+    "topic": "HTML Semantic Tags",
+    "task": "Replace the page structure implemented with <div> with semantic tags (<header>, <nav>, <main>, <footer>) and remove redundant class attributes",
+    "difficulty": 2,
+    "hints": [
+      "<header> is used for the page's top title area",
+      "<nav> is specifically for navigation link areas",
+      "<main> is the core content area of the page",
+      "<footer> is used for the page's bottom copyright information area"
+    ],
+    "initial_html": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>Semantic Webpage</title>\n  </head>\n  <body>\n    <div class=\"header\">Web Architect Blog</div>\n    <div class=\"nav\">Home | Articles | About Me</div>\n    <div class=\"main\">This is the core content area of the blog, including multiple articles.</div>\n    <div class=\"footer\">Copyright © 2025 Web Architect</div>\n  </body>\n</html>",
+    "initial_css": "",
+    "required_knowledge": ["Purpose of semantic tags", "Usage of common semantic tags", "Structure optimization principles"]
+  },
+  {
+    "id": "1-3",
+    "stage": 1,
+    "topic": "HTML Text & Media Tags",
+    "task": "Add heading levels (<h1>-<h3>), paragraphs (<p>), images (<img>), and links (<a>) to the page, ensuring complete tag attributes",
+    "difficulty": 2,
+    "hints": [
+      "<h1> is the highest-level heading (one page should ideally have only one), and <h2>-<h6> decrease in hierarchy",
+      "<img> tag must include src (image path) and alt (alternative text) attributes",
+      "<a> tag specifies the jump link via the href attribute, and target=\"_blank\" opens in a new window",
+      "<p> tag is used to wrap paragraph text and automatically wraps lines"
+    ],
+    "initial_html": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>Text & Media Example</title>\n  </head>\n  <body>\n    <!-- Add <h1> heading: My Travel Blog -->\n    <!-- Add <h2> heading: Trip to Yunnan -->\n    <!-- Add <p> tag to wrap the following text: Yunnan is a beautiful place with snow-capped mountains, lakes, and ancient cities. -->\n    <!-- Add <img> tag: src=\"https://picsum.photos/800/400\", alt=\"Yunnan Scenery\" -->\n    <!-- Add <a> tag: text \"View More Photos\", link \"https://example.com/yunnan\" -->\n  </body>\n</html>",
+    "initial_css": "",
+    "required_knowledge": ["Heading level specifications", "Image tag attributes", "Link tag usage", "Paragraph text formatting"]
+  },
+  {
+    "id": "2-1",
+    "stage": 2,
+    "topic": "Basic CSS Selectors",
+    "task": "Fix CSS selector errors and set styles for corresponding elements using element selectors, class selectors (.), and ID selectors (#)",
+    "difficulty": 2,
+    "hints": [
+      "Element selectors use tag names directly (e.g., h1, p)",
+      "Class selectors start with . and correspond to the class attribute in HTML (e.g., .classname)",
+      "ID selectors start with # and correspond to the id attribute in HTML (e.g., #idname)",
+      "Selectors and style declarations are wrapped in {}, attributes and values are connected with :, and end with ;"
+    ],
+    "initial_html": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>CSS Selector Test</title>\n  </head>\n  <body>\n    <h1 id=\"title\">Introduction to CSS Selectors</h1>\n    <p class=\"intro\">This is introductory text and needs to be set to blue.</p>\n    <div class=\"box\">This is a box and needs to be set with a red border.</div>\n  </body>\n</html>",
+    "initial_css": "/* Error: Element selector is correct, but color value is wrong */\n h1 {\n  color: rede; /* Should be red */\n  font-size: 24px;\n}\n\n/* Error: Class selector missing . */\nintro {\n  color: blue;\n  line-height: 1.5;\n}\n\n/* Error: ID selector missing # */\ntitle {\n  text-align: center;\n}\n\n/* Error: Selector does not match HTML class */\n.boxx {\n  border: 2px solid red;\n  padding: 10px;\n}",
+    "required_knowledge": ["Element selectors", "Class selectors", "ID selectors", "CSS syntax rules"]
+  },
+  {
+    "id": "2-2",
+    "stage": 2,
+    "topic": "CSS Box Model",
+    "task": "Adjust box styles through margin (outer spacing), padding (inner spacing), and border (border) to achieve \"20px spacing between boxes, 15px spacing from internal content to border, and 2px gray border\"",
+    "difficulty": 3,
+    "hints": [
+      "margin controls the outer spacing of elements, and padding controls the inner spacing",
+      "border needs to set width, style, and color (e.g., border: 2px solid #ccc)",
+      "box-sizing: border-box; prevents padding and border from affecting the total width of the element",
+      "margin: 0 auto; centers the element horizontally"
+    ],
+    "initial_html": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>CSS Box Model Test</title>\n  </head>\n  <body>\n    <div class=\"container\">\n      <div class=\"box\">Box 1: HTML Basics</div>\n      <div class=\"box\">Box 2: CSS Styles</div>\n      <div class=\"box\">Box 3: Layout Skills</div>\n    </div>\n  </body>\n</html>",
+    "initial_css": "/* Please fix and supplement styles */\n.container {\n  width: 800px;\n  margin: 0 auto;\n}\n\n.box {\n  width: 200px;\n  /* Missing padding: 15px internal spacing */\n  /* Missing border: 2px gray solid line */\n  /* Missing margin: 20px external spacing */\n  background-color: #f5f5f5;\n}",
+    "required_knowledge": ["margin outer spacing", "padding inner spacing", "border", "box-sizing property"]
+  },
+  {
+    "id": "2-3",
+    "stage": 2,
+    "topic": "CSS Text Styles",
+    "task": "Beautify article text: center headings with color #2c3e50; set paragraph text color to #333, line height to 1.6, font size to 16px; set link color to #3498db, change to red without underline on hover",
+    "difficulty": 2,
+    "hints": [
+      "text-align: center; centers text",
+      "line-height controls line height, usually set to 1.5-1.8 for better readability",
+      "color property sets text color (supports hexadecimal, RGB)",
+      "a:hover is used to set styles when the mouse hovers over the link",
+      "text-decoration: none; removes link underlines"
+    ],
+    "initial_html": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>Text Style Beautification</title>\n  </head>\n  <body>\n    <div class=\"article\">\n      <h2>The Development Trend of Web Development</h2>\n      <p>With the development of Internet technology, Web development has become one of the core areas of the IT industry. From static web pages to dynamic interactions, from PC terminals to mobile terminals, the boundaries of Web development are constantly expanding.</p>\n      <p>As an important part of Web development, front-end development requires mastering core technologies such as HTML, CSS, and JavaScript, while focusing on cutting-edge directions such as responsive design and performance optimization.</p>\n      <p>Learn more about trends: <a href=\"https://example.com/web-trends\">Web Development Trend Report</a></p>\n    </div>\n  </body>\n</html>",
+    "initial_css": "/* Please supplement text styles */\n.article {\n  width: 800px;\n  margin: 0 auto;\n  padding: 20px;\n}\n\n/* Heading style: centered, color #2c3e50 */\n\n/* Paragraph style: color #333, line height 1.6, font size 16px */\n\n/* Link style: color #3498db, no underline; red on hover */",
+    "required_knowledge": ["Text alignment", "Font size and color", "Line height setting", "Link pseudo-class styles"]
+  },
+  {
+    "id": "3-1",
+    "stage": 3,
+    "topic": "Basic Flexbox Layout",
+    "task": "Implement a navigation bar with Flexbox: horizontally centered arrangement, 15px spacing between links; automatically wrap on mobile terminals (screen <768px) with links vertically centered",
+    "difficulty": 3,
+    "hints": [
+      "display: flex; enables Flex layout for the parent container",
+      "justify-content: center; horizontally centers child elements",
+      "align-items: center; vertically centers child elements",
+      "gap: 15px; sets spacing between child elements",
+      "@media (max-width: 768px) { ... } writes mobile adaptation styles",
+      "flex-wrap: wrap; allows child elements to wrap"
+    ],
+    "initial_html": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>Flexbox Navigation Bar</title>\n  </head>\n  <body>\n    <nav class=\"nav-container\">\n      <a href=\"#home\" class=\"nav-link\">Home</a>\n      <a href=\"#articles\" class=\"nav-link\">Articles</a>\n      <a href=\"#courses\" class=\"nav-link\">Courses</a>\n      <a href=\"#about\" class=\"nav-link\">About Me</a>\n      <a href=\"#contact\" class=\"nav-link\">Contact Us</a>\n    </nav>\n  </body>\n</html>",
+    "initial_css": "/* Please implement navigation bar layout with Flexbox */\n.nav-container {\n  background-color: #2c3e50;\n  height: 60px;\n  /* Enable Flex layout */\n  /* Horizontally centered */\n  /* Vertically centered */\n  /* Link spacing 15px */\n}\n\n.nav-link {\n  color: white;\n  text-decoration: none;\n  padding: 0 10px;\n}\n\n/* Mobile adaptation (<768px): automatic wrapping */\n@media (max-width: 768px) {\n  .nav-container {\n    /* Allow wrapping */\n    height: auto;\n    padding: 10px 0;\n  }\n}",
+    "required_knowledge": ["Flex container properties", "Flex child element properties", "Media queries", "Basic responsive layout"]
+  },
+  {
+    "id": "3-2",
+    "stage": 3,
+    "topic": "Complex Grid Layout",
+    "task": "Implement 3-column equal-width card layout with Grid: 15px spacing between cards; 3 columns on PC (>1200px), 2 columns on tablet (768-1200px), 1 column on mobile (<768px); vertically center content inside cards",
+    "difficulty": 4,
+    "hints": [
+      "display: grid; enables Grid layout",
+      "grid-template-columns: repeat(3, 1fr); implements 3 equal-width columns",
+      "grid-gap: 15px; sets card spacing (abbreviated as gap)",
+      "align-items: center; vertically centers content inside cards",
+      "Adjust the number of columns with grid-template-columns in media queries"
+    ],
+    "initial_html": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>Grid Card Layout</title>\n  </head>\n  <body>\n    <div class=\"card-container\">\n      <div class=\"card\">\n        <h3>HTML5</h3>\n        <p>New features such as semantic tags, local storage, and Canvas</p>\n      </div>\n      <div class=\"card\">\n        <h3>CSS3</h3>\n        <p>Layout and beautification capabilities like Flexbox, Grid, animations, and transitions</p>\n      </div>\n      <div class=\"card\">\n        <h3>JavaScript</h3>\n        <p>Core of interaction logic, DOM manipulation, and asynchronous programming</p>\n      </div>\n      <div class=\"card\">\n        <h3>Responsive Design</h3>\n        <p>Adapt to different device screens and improve user experience</p>\n      </div>\n      <div class=\"card\">\n        <h3>Performance Optimization</h3>\n        <p>Code compression, image optimization, and caching strategies</p>\n      </div>\n      <div class=\"card\">\n        <h3>Engineering</h3>\n        <p>Build tools like Webpack and Vite to improve development efficiency</p>\n      </div>\n    </div>\n  </body>\n</html>",
+    "initial_css": "/* Please implement responsive card layout with Grid */\n.card-container {\n  width: 90%;\n  max-width: 1400px;\n  margin: 0 auto;\n  /* Enable Grid layout */\n  /* 3 equal-width columns */\n  /* Spacing 15px */\n}\n\n.card {\n  background-color: #f8f9fa;\n  border: 1px solid #eee;\n  padding: 20px;\n  /* Vertically center internal content */\n  height: 150px;\n}\n\n/* Tablet (768-1200px): 2 columns */\n@media (max-width: 1200px) {\n  .card-container {\n    /* 2 equal-width columns */\n  }\n}\n\n/* Mobile (<768px): 1 column */\n@media (max-width: 768px) {\n  .card-container {\n    /* 1 column */\n  }\n}",
+    "required_knowledge": ["Grid container properties", "Grid column setting", "Responsive Grid layout", "Advanced media queries"]
+  },
+  {
+    "id": "3-3",
+    "stage": 3,
+    "topic": "Float & Clear Float",
+    "task": "Implement \"image on left, text on right\" layout with float: image aligned to the left, text wrapping around the image; fix parent container height collapse; 10px spacing between image and text",
+    "difficulty": 3,
+    "hints": [
+      "float: left; makes the image float to the left",
+      "margin-right: 10px; sets spacing between image and text",
+      "overflow: hidden; or clear: both; fixes parent container height collapse",
+      "Floated elements need to set width to avoid layout confusion due to adaptive width"
+    ],
+    "initial_html": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>Float Layout Example</title>\n  </head>\n  <body>\n    <div class=\"article-container\">\n      <img src=\"https://picsum.photos/300/200\" alt=\"Web Development\" class=\"article-img\">\n      <h3>Application Scenarios of Float Layout</h3>\n      <p>Float layout is a commonly used layout method in early Web development, mainly used to achieve effects such as text wrapping around images and multi-column layouts. Although Flexbox and Grid layouts are more powerful now, floats are still used in certain scenarios.</p>\n      <p>When using floats, it is necessary to clear floats to avoid parent container height collapse. Common methods include overflow: hidden, clear: both, and pseudo-element clearing.</p>\n    </div>\n  </body>\n</html>",
+    "initial_css": "/* Please implement image on left, text on right layout with float */\n.article-container {\n  width: 800px;\n  margin: 0 auto;\n  border: 1px solid #ccc;\n  /* Fix height collapse issue */\n}\n\n.article-img {\n  /* Float to the left */\n  /* Set width */\n  /* 10px spacing with text */\n}\n\nh3 {\n  margin-top: 0;\n}",
+    "required_knowledge": ["float property", "Clearing floats", "Parent container height collapse issue", "Float layout application scenarios"]
+  },
+  {
+    "id": "4-1",
+    "stage": 4,
+    "topic": "Advanced Responsive Design",
+    "task": "Implement complete responsive layout for the blog page: 3 columns (sidebar + main content + sidebar) on PC (>1200px), 2 columns (main content + sidebar) on tablet (768-1200px), 1 column (stacked layout) on mobile (<768px); navigation bar collapses into a hamburger menu on mobile (simplified version: hide redundant links)",
+    "difficulty": 4,
+    "hints": [
+      "Use min-width media queries to implement mobile-first layout",
+      "Adjust the number of columns and order with Flexbox combined with media queries",
+      "Hide secondary elements on mobile and prioritize core content",
+      "Use relative units (%、em、rem) to ensure element adaptability"
+    ],
+    "initial_html": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>Responsive Blog</title>\n  </head>\n  <body>\n    <nav class=\"navbar\">\n      <div class=\"logo\">Blog Home</div>\n      <div class=\"nav-links\">\n        <a href=\"#\">Home</a>\n        <a href=\"#\">Articles</a>\n        <a href=\"#\">Categories</a>\n        <a href=\"#\">Tags</a>\n        <a href=\"#\">About</a>\n      </div>\n    </nav>\n    <div class=\"container\">\n      <aside class=\"sidebar-left\">\n        <h4>Category Navigation</h4>\n        <ul>\n          <li><a href=\"#\">HTML/CSS</a></li>\n          <li><a href=\"#\">JavaScript</a></li>\n          <li><a href=\"#\">Responsive Design</a></li>\n        </ul>\n      </aside>\n      <main class=\"main-content\">\n        <article class=\"post\">\n          <h2>Core Principles of Responsive Design</h2>\n          <p>Responsive Web Design (RWD) is a design and development method that allows websites to automatically adjust layout and content according to the user's device screen size. Its core principles include: fluid layouts, flexible images, and media queries.</p>\n        </article>\n      </main>\n      <aside class=\"sidebar-right\">\n        <h4>Popular Articles</h4>\n        <ul>\n          <li><a href=\"#\">Complete Guide to Flexbox Layout</a></li>\n          <li><a href=\"#\">Practical Tutorial on Grid Layout</a></li>\n        </ul>\n      </aside>\n    </div>\n  </body>\n</html>",
+    "initial_css": "/* Please implement complete responsive layout */\n* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n\n.navbar {\n  background-color: #2c3e50;\n  color: white;\n  padding: 15px 20px;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.nav-links a {\n  color: white;\n  text-decoration: none;\n  margin-left: 20px;\n}\n\n.container {\n  width: 90%;\n  max-width: 1400px;\n  margin: 20px auto;\n  /* Enable Flex layout, 3 columns by default */\n  display: flex;\n  gap: 20px;\n}\n\n.sidebar-left {\n  width: 20%;\n  background-color: #f5f5f5;\n  padding: 15px;\n}\n\n.main-content {\n  width: 60%;\n  padding: 15px;\n}\n\n.sidebar-right {\n  width: 20%;\n  background-color: #f5f5f5;\n  padding: 15px;\n}\n\n/* Tablet (768-1200px): 2 columns (main content + right sidebar, hide left sidebar) */\n@media (max-width: 1200px) {\n  .container {\n    /* Adjust to 2 columns */\n  }\n  .sidebar-left {\n    /* Hide left sidebar */\n    display: none;\n  }\n  .main-content {\n    width: 70%;\n  }\n  .sidebar-right {\n    width: 30%;\n  }\n}\n\n/* Mobile (<768px): 1 column, hide some navigation links */\n@media (max-width: 768px) {\n  .container {\n    /* Adjust to 1 column */\n    flex-direction: column;\n  }\n  .main-content, .sidebar-right {\n    width: 100%;\n  }\n  .nav-links a:nth-child(4), .nav-links a:nth-child(5) {\n    /* Hide 4th and 5th navigation links */\n    display: none;\n  }\n}",
+    "required_knowledge": ["Mobile-first design", "Advanced media queries", "Responsive adjustment of Flex layout", "Responsive navigation bar"]
+  },
+  {
+    "id": "4-2",
+    "stage": 4,
+    "topic": "CSS Beautification & Animations",
+    "task": "Add advanced beautification effects to cards: gradient background, rounded borders, shadows; card floats up 5px and deepens shadow when mouse hovers; add hover animations to buttons (background color change, scaling)",
+    "difficulty": 3,
+    "hints": [
+      "background: linear-gradient(direction, color1, color2); implements gradient background",
+      "border-radius: 8px; implements rounded borders",
+      "box-shadow: 0 2px 10px rgba(0,0,0,0.1); implements shadow effect",
+      "transition: all 0.3s ease; implements smooth transition animation",
+      "transform: translateY(-5px); implements floating effect",
+      "transform: scale(1.05); implements scaling effect"
+    ],
+    "initial_html": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>CSS Beautification & Animations</title>\n  </head>\n  <body>\n    <div class=\"card-container\">\n      <div class=\"card\">\n        <h3>HTML5</h3>\n        <p>New features such as semantic tags, local storage, and Canvas</p>\n        <button class=\"card-btn\">View Details</button>\n      </div>\n      <div class=\"card\">\n        <h3>CSS3</h3>\n        <p>Layout and beautification capabilities like Flexbox, Grid, animations, and transitions</p>\n        <button class=\"card-btn\">View Details</button>\n      </div>\n    </div>\n  </body>\n</html>",
+    "initial_css": "/* Please add beautification and animation effects */\n.card-container {\n  display: flex;\n  gap: 20px;\n  justify-content: center;\n  padding: 50px;\n}\n\n.card {\n  width: 300px;\n  padding: 25px;\n  /* Gradient background: from #3498db to #2980b9 */\n  /* Rounded corners: 8px */\n  /* Shadow: 0 2px 10px rgba(0,0,0,0.1) */\n  /* Transition animation: all attributes smoothly transition in 0.3s */\n  color: white;\n}\n\n/* When mouse hovers: float up 5px, deepen shadow */\n.card:hover {\n  /* Float up 5px */\n  /* Shadow: 0 5px 15px rgba(0,0,0,0.2) */\n}\n\n.card-btn {\n  background-color: white;\n  color: #3498db;\n  border: none;\n  padding: 10px 20px;\n  border-radius: 20px;\n  margin-top: 15px;\n  cursor: pointer;\n  /* Transition animation: 0.3s */\n}\n\n/* Button hover: background color #f1c40f, scale 1.05 */\n.card-btn:hover {\n  /* Background color #f1c40f */\n  /* Scale 1.05 */\n  color: white;\n}",
+    "required_knowledge": ["CSS gradients", "Shadow effects", "Transition animations", "Transform properties (transform)"]
+  },
+  {
+    "id": "4-3",
+    "stage": 4,
+    "topic": "Comprehensive Project: Personal Blog Homepage Development",
+    "task": "Comprehensively use knowledge from the previous 11 levels to independently develop a complete personal blog homepage, which must meet: 1. Semantic HTML structure; 2. Mixed Flex+Grid layout; 3. Full responsive adaptation (PC/tablet/mobile); 4. CSS beautification (gradients, shadows, animations); 5. Text style optimization (readability)",
+    "difficulty": 5,
+    "hints": [
+      "First plan the page structure (header, nav, main, aside, footer), then write styles",
+      "Write CSS using a mobile-first approach, then adapt to large screens with media queries",
+      "Prioritize adaptation of core content areas; secondary content (e.g., sidebars) can be hidden or stacked on mobile",
+      "Use animation effects moderately to avoid excessive flashiness affecting performance",
+      "Keep code comments clear and structure neat"
+    ],
+    "initial_html": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>My Personal Blog</title>\n  </head>\n  <body>\n    <!-- Please write the complete blog homepage code here -->\n    <!-- Requirements include: navigation bar, carousel (simplified as image), article list, category sidebar, recommended articles, footer -->\n  </body>\n</html>",
+    "initial_css": "/* Please write complete CSS styles to meet comprehensive project requirements */\n/* 1. Reset default styles */\n/* 2. Global styles (font, color, line height) */\n/* 3. Layout styles (Flex+Grid) */\n/* 4. Responsive adaptation (media queries) */\n/* 5. Beautification and animation effects */",
+    "required_knowledge": ["HTML semantics", "CSS box model", "Flex/Grid layout", "Responsive design", "CSS beautification and animations", "Code organization and optimization"]
+  }
+]

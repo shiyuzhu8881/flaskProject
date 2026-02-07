@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Create Student Account - Web Architect{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-card {
+        max-width: 600px;
+        margin: 30px auto;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+    .form-title {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #0d6efd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card register-card">
+    <h2 class="form-title">
+        <i class="fa fa-user-plus"></i> Create Student Account
+    </h2>
+    <form method="POST" action="{{ url_for('main.register') }}">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="user_id" class="form-label">Student ID (Username)</label>
+                <input type="text" class="form-control" id="user_id" name="user_id" required placeholder="e.g., student002">
+            </div>
+            <div class="col-md-6">
+                <label for="email" class="form-label">Student Email</label>
+                <input type="email" class="form-control" id="email" name="email" required placeholder="e.g., student002@example.com">
+            </div>
+            <div class="col-md-6">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required placeholder="Set password">
+            </div>
+            <div class="col-md-6">
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required placeholder="Re-enter password">
+            </div>
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary w-100 py-2">Create Account</button>
+            <a href="{{ url_for('teacher.student_list') }}" class="btn btn-outline-secondary w-100 py-2 mt-2">Back to Student List</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

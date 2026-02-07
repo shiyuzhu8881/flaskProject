@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}{{ student.id }} - Student Details - Web Architect{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.css">
+<style>
+    .detail-card {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+    .chart-container {
+        height: 250px;
+        margin-top: 15px;
+    }
+    .submission-item {
+        border-left: 3px solid #0d6efd;
+        padding-left: 15px;
+        margin-bottom: 15px;
+    }
+    .code-block {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 12px;
+        overflow-x: auto;
+        margin: 5px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+        <i class="fa fa-user"></i> Student Details: {{ student.id }}
+    </h2>
+    <a href="{{ url_for('teacher.student_list') }}" class="btn btn-outline-primary">
+        <i class="fa fa-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<!-- Student Basic Information -->
+<div class="card detail-card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Basic Information</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <p class="text-muted">Username (Student ID)</p>
+                <h5>{{ student.id }}</h5>
+            </div>
+            <div class="col-md-4">
+                <p class="text-muted">Email</p>
+                <h5>{{ student.email }}</h5>
+            </div>
+            <div class="col-md-4">
+                <p class="text-muted">Registration Time</p>
+                <h5>{{ student.created_at.strftime('%Y-%m-%d %H:%M') }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Learning Statistics -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card detail-card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Learning Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <p class="text-muted">Total Submissions</p>
+                        <h4 class="fw-bold">{{ student_stats.total_submissions }}</h4>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-muted">Passed Levels</p>
+                        <h4 class="fw-bold">{{ student_stats.passed_levels }}/12</h4>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-muted">Average Score</p>
+                        <h4 class="fw-bold">{{ student_stats.avg_score }}</h4>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="scoreTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card detail-card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Weak Knowledge Points</h5>
+            </div>
+            <div class="card-body">
+                {% if student_stats.weak_topics %}
+                    <div class="chart-container">
+                        <canvas id="weakTopicsChart"></canvas>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <i class="fa fa-check-circle text-success fa-2x mb-2"></i>
+                        <p>No obvious weak knowledge points, keep up the good work!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Level Progress & Submission Records -->
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card detail-card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Level Progress</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for level in levels %}
+                        {% set level_stats = student_stats.level_progress[level.id] %}
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <span>{{ level.id }} - {{ level.topic }}</span>
+                                {% if level_stats.is_passed %}
+                                    <span class="badge bg-success ms-2">Passed</span>
+                                {% else %}
+                                    <span class="badge bg-secondary ms-2">Not Passed</span>
+                                {% endif %}
+                            </div>
+                            <span class="badge bg-light text-dark">
+                                {{ level_stats.submission_count }} Submissions
+                            </span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card detail-card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Recent Submissions (Top 20)</h5>
+            </div>
+            <div class="card-body">
+                {% for submission in submissions %}
+                    <div class="submission-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="fw-bold">
+                                Level {{ submission.level_id }}
+                                {% if submission.is_passed %}
+                                    <span class="badge bg-success">Passed</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Not Passed</span>
+                                {% endif %}
+                            </h6>
+                            <span class="text-sm text-muted">{{ submission.submit_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
+                        <p class="text-sm mt-1">
+                            Score: {{ submission.score }}
+                            {% if submission.error_type %}
+                                | Error Type: {{ submission.error_type }}
+                            {% endif %}
+                        </p>
+                        <div>
+                            <p class="text-xs text-muted">HTML Code:</p>
+                            <div class="code-block">{{ submission.html_code }}</div>
+                        </div>
+                        {% if submission.css_code %}
+                            <div>
+                                <p class="text-xs text-muted">CSS Code:</p>
+                                <div class="code-block">{{ submission.css_code }}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-3">
+                        <p>No submission records yet</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+<script>
+    // Initialize Score Trend Chart
+    const scoreTrendCtx = document.getElementById('scoreTrendChart').getContext('2d');
+    const levelIds = {{ student_stats.level_progress.keys() | list | tojson }};
+    const highestScores = levelIds.map(levelId =>
+        {{ student_stats.level_progress | tojson }}[levelId].highest_score
+    );
+    new Chart(scoreTrendCtx, {
+        type: 'line',
+        data: {
+            labels: levelIds,
+            datasets: [{
+                label: 'Highest Score per Level',
+                data: highestScores,
+                fill: false,
+                borderColor: 'rgba(22, 163, 74, 1)',
+                tension: 0.3,
+                pointBackgroundColor: 'rgba(22, 163, 74, 1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Score'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Level'
+                    }
+                }
+            }
+        }
+    });
+
+    // Initialize Weak Knowledge Points Chart
+    const weakTopicsCtx = document.getElementById('weakTopicsChart').getContext('2d');
+    new Chart(weakTopicsCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ student_stats.weak_topics.keys() | list | tojson }},
+            datasets: [{
+                data: {{ student_stats.weak_topics.values() | list | tojson }},
+                backgroundColor: [
+                    'rgba(220, 38, 38, 0.7)',
+                    'rgba(234, 179, 8, 0.7)',
+                    'rgba(13, 110, 253, 0.7)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

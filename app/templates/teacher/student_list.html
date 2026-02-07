@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Student Management - Web Architect{% endblock %}
+
+{% block extra_css %}
+<style>
+    .student-table {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .table-header {
+        background-color: #0d6efd;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+        <i class="fa fa-users"></i> Student Management
+    </h2>
+    <a href="{{ url_for('main.register') }}" class="btn btn-primary">
+        <i class="fa fa-user-plus"></i> Create Student Account
+    </a>
+</div>
+
+<div class="card student-table">
+    <div class="table-header p-3">
+        <h5 class="mb-0">Student List</h5>
+    </div>
+    <div class="p-3">
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>Username (Student ID)</th>
+                    <th>Email</th>
+                    <th>Registration Date</th>
+                    <th>Passed Levels</th>
+                    <th>Average Score</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    {% set stats = get_user_submission_stats(student.id) %}
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ stats.passed_levels }}/12</td>
+                        <td>{{ stats.avg_score }}</td>
+                        <td>
+                            <a href="{{ url_for('teacher.student_detail', user_id=student.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fa fa-eye"></i> View Details
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No student data available</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Import student statistics service (implemented by backend)
+    window.get_user_submission_stats = async (userId) => {
+        const response = await fetch(`{{ url_for('api.user_stats') }}?user_id=${userId}`);
+        const data = await response.json();
+        return data.stats;
+    };
+</script>
+{% endblock %}
