@@ -470,3 +470,4 @@ class Stage2Validator:
             'msg': 'Text style beautification completed! Meet the requirements of 2-4～' if is_passed else f'Errors: {" | ".join(error_list)}',  # 英文替换
             'error_type': None if is_passed else '文本样式错误',
             'score': total_score
+        }
