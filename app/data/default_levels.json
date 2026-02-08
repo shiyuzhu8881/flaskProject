@@ -89,17 +89,18 @@
     "id": "2-2",
     "stage": 2,
     "topic": "CSS Box Model",
-    "task": "Adjust box styles through margin (outer spacing), padding (inner spacing), and border (border) to achieve \"20px spacing between boxes, 15px spacing from internal content to border, and 2px gray border\"",
+    "task": "Adjust box styles through margin (outer spacing), padding (inner spacing), and border (border) to achieve \"20px spacing between boxes (only bottom and right), 15px uniform inner spacing, 2px solid gray border (#ccc), and ensure box width is fixed at 200px (including border/padding)\"",
     "difficulty": 3,
     "hints": [
-      "margin controls the outer spacing of elements, and padding controls the inner spacing",
-      "border needs to set width, style, and color (e.g., border: 2px solid #ccc)",
-      "box-sizing: border-box; prevents padding and border from affecting the total width of the element",
-      "margin: 0 auto; centers the element horizontally"
+      "margin controls the outer spacing of elements (use margin: 0 20px 20px 0 for right/bottom spacing)",
+      "padding: 15px sets uniform 15px inner spacing on all sides",
+      "border: 2px solid #ccc sets 2px gray solid border",
+      "box-sizing: border-box; ensures padding/border are included in the element's total width/height",
+      "margin: 0 auto; centers the container horizontally"
     ],
-    "initial_html": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>CSS Box Model Test</title>\n  </head>\n  <body>\n    <div class=\"container\">\n      <div class=\"box\">Box 1: HTML Basics</div>\n      <div class=\"box\">Box 2: CSS Styles</div>\n      <div class=\"box\">Box 3: Layout Skills</div>\n    </div>\n  </body>\n</html>",
-    "initial_css": "/* Please fix and supplement styles */\n.container {\n  width: 800px;\n  margin: 0 auto;\n}\n\n.box {\n  width: 200px;\n  /* Missing padding: 15px internal spacing */\n  /* Missing border: 2px gray solid line */\n  /* Missing margin: 20px external spacing */\n  background-color: #f5f5f5;\n}",
-    "required_knowledge": ["margin outer spacing", "padding inner spacing", "border", "box-sizing property"],
+    "initial_html": "<!DOCTYPE html>\n<html>\n  <head>\n    <title>CSS Box Model Test</title>\n    <style>\n      /* Please fix and supplement styles */\n      .container {\n        width: 800px;\n        margin: 0 auto;\n        display: flex;\n        flex-wrap: wrap;\n      }\n\n      .box {\n        width: 200px;\n        /* Missing padding: 15px internal spacing */\n        /* Missing border: 2px gray solid line */\n        /* Missing margin: 20px (right/bottom only) */\n        /* Missing box-sizing: border-box */\n        background-color: #f5f5f5;\n      }\n    </style>\n  </head>\n  <body>\n    <div class=\"container\">\n      <div class=\"box\">Box 1: HTML Basics</div>\n      <div class=\"box\">Box 2: CSS Styles</div>\n      <div class=\"box\">Box 3: Layout Skills</div>\n      <div class=\"box\">Box 4: Responsive Design</div>\n    </div>\n  </body>\n</html>",
+    "initial_css": "/* Please fix and supplement styles */\n.container {\n  width: 800px;\n  margin: 0 auto;\n  display: flex;\n  flex-wrap: wrap;\n}\n\n.box {\n  width: 200px;\n  /* Missing padding: 15px internal spacing */\n  /* Missing border: 2px gray solid line */\n  /* Missing margin: 20px (right/bottom only) */\n  /* Missing box-sizing: border-box */\n  background-color: #f5f5f5;\n}",
+    "required_knowledge": ["margin outer spacing (directional control)", "padding inner spacing", "border property", "box-sizing: border-box (critical for fixed width)"],
     "type": "code",
     "extra_config": "{}"
   },
