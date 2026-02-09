@@ -424,6 +424,18 @@
 
                 if (JSON.stringify(answers) === JSON.stringify(correctAnswer)) {
                     // 答案正确，加分
+
+await fetch('/api/submit-code', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+        level_id: GAME_CONFIG.currentLevel,
+        html_code: '',
+        css_code: answers.join(','), // 例如 'B'
+        used_hint_count: parseInt(localStorage.getItem(`hint_${GAME_CONFIG.currentLevel}`) || '0')
+    })
+});
+
                     const scoreAdded = await addScore(GAME_CONFIG.extraConfig.score || 0);
                     if (scoreAdded) {
                         showFeedback(`Correct! You earned ${GAME_CONFIG.extraConfig.score || 0} points!`, 'success');
@@ -505,6 +517,23 @@
 
                 if (isAllCorrect) {
                     // 匹配正确，加分
+                    const mapping = {};
+document.querySelectorAll('.drop-area').forEach(area => {
+    const targetId = area.dataset.target; // target1/target2/target3
+    const draggable = area.querySelector('.draggable-item');
+    mapping[targetId] = draggable ? draggable.dataset.id : ''; // drag1/drag2/drag3
+});
+
+await fetch('/api/submit-code', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+        level_id: GAME_CONFIG.currentLevel,
+        html_code: '',
+        css_code: JSON.stringify(mapping), // 2-3 后端用 css_code 收 JSON mapping
+        used_hint_count: parseInt(localStorage.getItem(`hint_${GAME_CONFIG.currentLevel}`) || '0')
+    })
+});
                     const scoreAdded = await addScore(GAME_CONFIG.extraConfig.score || 0);
                     if (scoreAdded) {
                         showFeedback(`Correct! You earned ${GAME_CONFIG.extraConfig.score || 0} points!`, 'success');
